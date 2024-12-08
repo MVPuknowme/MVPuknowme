@@ -1,0 +1,27 @@
+import subprocess
+
+# Path to the command.exe file
+command_path = "C:\\path\\to\\command.exe"
+
+# Arguments to pass to the executable
+arguments = ["arg1", "arg2"]
+
+try:
+    # Run the command
+    result = subprocess.run([command_path] + arguments, capture_output=True, text=True)
+
+    # Print the output and errors
+    print("Output:")
+    print(result.stdout)
+    print("Errors:")
+    print(result.stderr)
+
+    # Check the return code
+    if result.returncode == 0:
+        print("Command executed successfully.")
+    else:
+        print(f"Command failed with return code: {result.returncode}")
+except FileNotFoundError:
+    print("Error: command.exe not found at the specified path.")
+except Exception as e:
+    print(f"An error occurred: {e}")
