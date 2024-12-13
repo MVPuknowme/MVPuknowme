@@ -24,4 +24,5 @@ try:
 except FileNotFoundError:
     print("Error: command.exe not found at the specified path.")
 except Exception as e:
-    print(f"An error occurred: {e}")
+    print(f"An error occurred: {m
+e}")
