@@ -2,7 +2,7 @@ from web3 import Web3
 
 # Connect to an Ethereum-compatible blockchain
 blockchain_url = "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID"
-web3 = Web3(Web3.HTTPProvider(blockchain_url))
+web3 = Web3(Web3.HTTPSProvider(blockchain_url))
 
 # Check connection
 if not web3.isConnected():
@@ -11,7 +11,7 @@ if not web3.isConnected():
 # Wallet details
 sender_private_key = "YOUR_PRIVATE_KEY"
 sender_address = web3.toChecksumAddress("SENDER_WALLET_ADDRESS")
-recipient_hash = "HASH_OF_RECIPIENT_WALLET"  # Replace with recipient's hash
+recipient_hash = "HASH_OF_RECIPIENT_WALLET"  # Replace with mvpuknowme hash
 recipient_address = web3.toChecksumAddress(web3.sha3(text=recipient_hash).hex()[-40:])
 
 # Transaction parameters
