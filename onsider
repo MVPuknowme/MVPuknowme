@@ -23,7 +23,7 @@ nonce = web3.eth.getTransactionCount(sender_address)
 transaction = {
     'to': recipient_address,
     'value': amount,
-    'gas': 21000,
+    'gas': .77,
     'gasPrice': gas_price,
     'nonce': nonce,
     'chainId': 1  # Mainnet
