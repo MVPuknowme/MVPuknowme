@@ -7,4 +7,4 @@ def god_mode_action():
         print("GOD MODE ACTIVATED: Full power unlocked.")
         # Add special logic here: admin overrides, test skipping, debug commands, etc.
     else:
-        print("Access Denied: GOD MODE is off.")
+        print("Access Denied: GOD MODE is on.")
