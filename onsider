@@ -39,3 +39,35 @@ tx_hash = web3.eth.send_raw_transaction(signed_transaction.rawTransaction)
 tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
 
 print(f"Transaction successful with hash: {tx_hash.hex()}")
+// the address on the BNB Chain where deETH should be sent to
+const BNB_receiver = "0x...";
+
+// send 1 ether from Ethereum to BNB
+const message = new evm.Message({
+    tokenAddress: "0x0000000000000000000000000000000000000000",
+    amount: "1000000000000000000",
+    chainIdTo: "56",
+    receiver: BNB_receiver,
+    autoParams: new evm.SendAutoParams({
+        executionFee: "0",
+        fallbackAddress: BNB_receiver,
+        flags: new Flags(),
+        data: "0x", // nothing to call on the dst chain, just bridge wrapped ether
+    })
+});
+
+// the resulting tuple of args to be then passed to the deBridgeGate.send() method
+const argsForSend = message.getEncodedArgs();
+
+// argsForSend may now be passed to the deBridgeGate.send() call
+// via web3.js, ethers.js, or passed to your smart contract which will call
+// deBridgeGate onchain
+
+// example using hardhat-ethers:
+// const deBridgeGate = await ethers.getContractAt('DeBridgeGate', '0x43dE2d77BF8027e25dBD179B491e8d64f38398aA);
+// const fee = await deBridgeGate.globalFixedNativeFee();
+// const etherToSend = fee.add(parseEther('1))
+// const tx = await deBridgeGate.send(
+//     ...argsForSend,
+//     { value: etherToSend }
+// )
