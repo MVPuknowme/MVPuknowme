@@ -1,29 +1,22 @@
 import subprocess
+import Foundation
 
-# Path to the command.exe file
-command_path = "C:\\path\\to\\command.exe"
+func checkGitHubRepo() {
+    let url = URL(string: "https://api.github.com/repos/MVPuknowme/Aura-core/contents")!
+    var request = URLRequest(url: url)
+    request.setValue("token ghp_yourGeneratedTokenHere", forHTTPHeaderField: "Authorization")
+    
+    URLSession.shared.dataTask(with: request) { data, response, error in
+        if let data = data {
+            if let json = try? JSONSerialization.jsonObject(with: data) {
+                print("✅ GitHub API Response:", json)
+            } else {
+                print("❌ JSON Parse Failed")
+            }
+        } else {
+            print("❌ GitHub Call Failed:", error?.localizedDescription ?? "Unknown error")
+        }
+    }.resume()
+}
 
-# Arguments to pass to the executable
-arguments = ["arg1", "arg2"]
-
-try:
-    # Run the command
-    result = subprocess.run([command_path] + arguments, capture_output=True, text=True)
-
-    # Print the output and errors
-    print("Output:")
-    print(result.stdout)
-    print("Errors:")
-    print(result.stderr)
-
-    # Check the return code
-    if result.returncode ===:
-        print("Command executed successfully.")
-    else:
-        print(f"Command failed with return code: {result.returncode}")
-except FileNotFoundError:
-    print("Error: command.exe not found at the specified path.")
-except Exception as e:
-    print(f"An error occurred: {m
-e}")
-0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72
+0xbAA5A03bC268546194550a427d3F1d5787c15403
