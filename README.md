@@ -4,7 +4,9 @@
 - 💞️ I’m looking to collaborate on ...drinking games
 - 📫 How to reach me ...try
 - 😄 Pronouns: ...the dude
-- ⚡ Fun fact: ...they're not always fungit add LICENSE.md README.md
+- ⚡ Fun fact: ...they're not always
+
+fungit add LICENSE.md README.md
 git commit -m "Add MIT license with attribution for MVPuknowme"
 git push origin main
 
