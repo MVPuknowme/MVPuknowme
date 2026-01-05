@@ -4,7 +4,13 @@
 - 💞️ I’m looking to collaborate on ...drinking games
 - 📫 How to reach me ...try
 - 😄 Pronouns: ...the dude
-- ⚡ Fun fact: ...they're not always
+- ⚡ Fun fact: ...they're not ![MVPuknowme IP Rights Badge](https://chat.openai.com/share/file-0000000063ac71f891c4b6aa601b48ec/MVP_Intellectual_Property_Badge.png)
+
+> **Michael Vincent Patrick**  
+> Official IP Rights Holder  
+> **MVPuknowme™ | Aura-Core™**  
+> $7.5M Valuation | Authorized & Protected  
+
 
 fungit add LICENSE.md README.md
 git commit -m "Add MIT license with attribution for MVPuknowme"
