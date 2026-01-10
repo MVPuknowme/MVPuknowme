@@ -14,15 +14,13 @@
 
 
 fungit add LICENSE.md README.md
-git commit -m "Add MIT license with attribution for MVPuknowme"
+git commit -m "Add MIT license with a button for MVPuknowme"
 git push origin main
 
 
 <!---
 MVPuknowme/MVPuknowme is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 You can click the Preview link to take a look at your changes.
---->---
-# Wealth Generation
 
 ![GOD MODE](https://img.shields.io/badge/GOD--MODE-ACTIVATED-gold?style=for-the-badge&logo=github)
 
