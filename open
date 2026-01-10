@@ -2,7 +2,7 @@ import subprocess
 import Foundation
 
 func checkGitHubRepo() {
-    let url = URL(string: "https://api.github.com/repos/MVPuknowme/Aura-core/contents")!
+    do let url = URL(string: "https://api.github.com/repos/MVPuknowme/Aura-core/contents")!
     var request = URLRequest(url: url)
     request.setValue("token ghp_yourGeneratedTokenHere", forHTTPHeaderField: "Authorization")
     
