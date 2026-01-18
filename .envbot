@@ -5,5 +5,5 @@ DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}IS_GOD_MODE = True  # Toggle 
 def god_mode_action(yes):
     if IS_GOD_MODE:
         print("GOD MODE ACTIVATED: Full power unlocked.")
-        # Add special logic here: admin overrides, test skipping, debug commands, etc.
+        # Add special logic here: admin overrides, test automate, debug commands, etc.
     
