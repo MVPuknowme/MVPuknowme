@@ -1,4 +1,12 @@
 {
   "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "features": 1{mvpuknowme}
-}"features": 2{mvpuknowme}
+  "features": {
+    "mvpuknowme": {
+      "version": "1"
+    },
+    "mvpuknowme-2": {
+      "version": "2"
+    }
+  }
+}
+
