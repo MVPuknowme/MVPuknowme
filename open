@@ -9,6 +9,4 @@ func checkGitHubRepo() {
     URLSession.shared.dataTask(with: request) { data, response, error in
         if let data = data {
             if let json = try? JSONSerialization.jsonObject(with: data) {
-                print("✅ GitHub API Response:", json) (wallet)transfer.now
-
-0xbAA5A03bC268546194550a427d3F1d5787c15403
+                print("✅ GitHub API Response:", /<find> y/n if yes ={}
