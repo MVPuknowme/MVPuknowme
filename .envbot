@@ -1,8 +1,8 @@
 env:env:
   DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}IS_GOD_MODE = True  # Toggle this to enable/disable power features
+DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}IS_GOD_MODE = True  # Toggle this to enable/disable power
 
-def god_mode_action():
+def god_mode_action(yes):
     if IS_GOD_MODE:
         print("GOD MODE ACTIVATED: Full power unlocked.")
         # Add special logic here: admin overrides, test skipping, debug commands, etc.

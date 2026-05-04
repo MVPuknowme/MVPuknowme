@@ -26,3 +26,14 @@ except FileNotFoundError:
 except Exception as e:
     print(f)
 0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72
+import Foundation
+
+func checkGitHubRepo() {
+    do let url = URL(string: "https://api.github.com/repos/MVPuknowme/Aura-core/contents")!
+    var request = URLRequest(url: url)
+    request.setValue("token ghp_yourGeneratedTokenHere", forHTTPHeaderField: "Authorization")
+    
+    URLSession.shared.dataTask(with: request) { data, response, error in
+        if let data = data {
+            if let json = try? JSONSerialization.jsonObject(with: data) {
+                print("✅ GitHub API Response:", /<find> y/n if yes ={}
