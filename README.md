@@ -9,7 +9,7 @@
 > **Michael Vincent Patrick**  
 > Official IP Rights Holder  
 > **MVPuknowme™ | Aura-Core™  
-> Skygrid**| Authorized & Protected  
+> Skygrid** | Authorized & Protected  
 
 
 fungit add LICENSE.md README.md
