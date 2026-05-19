@@ -1,15 +1,15 @@
 - 👋 Hi, I’m @MVPuknowme
-- 👀 I’m interested in ...cute chicks
-- 🌱 I’m currently learning ...everything 
-- 💞️ I’m looking to collaborate on ...drinking games
-- 📫 How to reach me ...try
-- 😄 Pronouns: ...the dude
-- ⚡ Fun fact: ...they're not
+- 👀 I’m interested in everything 
+- 🌱 I’m currently learning code for failover systems and how to run SAAS
+- 💞️ I’m looking to collaborate on Skygrid
+- 📫 How to reach me 5039011201 mike_p32@icloud.com
+- 😄 handle Mvpuknowme 
+- ⚡ Fun fact:the truth will set you free but it's not always nice.
 
 > **Michael Vincent Patrick**  
 > Official IP Rights Holder  
 > **MVPuknowme™ | Aura-Core™**  
-> $7.5M Valuation | Authorized & Protected  
+> Skygrid | Authorized & Protected  
 
 
 fungit add LICENSE.md README.md
