@@ -1,0 +1,158 @@
+{
+  "info": {
+    "name": "SkyGrid Runway Validation",
+    "description": "Public-safe validation collection for Aura-Core / SkyGrid B12 runway dashboard. Status, proof, quote, and advisory route checks only.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://YOUR-SUCCESSFUL-VERCEL-DOMAIN.vercel.app"
+    }
+  ],
+  "item": [
+    {
+      "name": "Pulse - GET /health.json",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": "{{baseUrl}}/health.json"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Pulse returns HTTP 200', () => pm.response.to.have.status(200));",
+            "pm.test('Pulse is JSON', () => pm.response.to.be.json);",
+            "const body = pm.response.json();",
+            "pm.expect(body).to.be.an('object');",
+            "pm.test('Runtime reports safe status field', () => pm.expect(body.status || body.ok).to.exist);"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Runway - GET /highway",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/highway"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Highway page returns HTTP 200', () => pm.response.to.have.status(200));",
+            "pm.test('Highway page is human-readable', () => pm.expect(pm.response.text().length).to.be.above(20));"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Highway JSON - GET /api/highway/status",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/highway/status"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Highway status returns HTTP 200', () => pm.response.to.have.status(200));",
+            "pm.test('Highway status is JSON', () => pm.response.to.be.json);",
+            "const body = pm.response.json();",
+            "pm.test('Highway status is advisory/ready', () => pm.expect(body.status || body.mode || body.ok).to.exist);"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Four Flasks - GET /api/highway/flasks",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/highway/flasks"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Four flasks route returns HTTP 200', () => pm.response.to.have.status(200));",
+            "pm.test('Four flasks response is JSON', () => pm.response.to.be.json);"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Dispatcher - GET /dispatch",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/dispatch"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Dispatcher route returns HTTP 200', () => pm.response.to.have.status(200));",
+            "pm.test('Dispatcher remains advisory language', () => pm.expect(pm.response.text().toLowerCase()).to.include('advisory'));"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Sun-Pay Quote - GET /api/pay/quote?amount=25",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/pay/quote?amount=25"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Quote route returns HTTP 200', () => pm.response.to.have.status(200));",
+            "pm.test('Quote response is JSON', () => pm.response.to.be.json);",
+            "const body = pm.response.json();",
+            "pm.test('Quote does not execute money movement', () => { pm.expect(JSON.stringify(body).toLowerCase()).to.not.include('executed'); });"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Device Link - GET /api/stripe/device-link",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/stripe/device-link"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Device-link route returns safe response', () => pm.expect(pm.response.code).to.be.oneOf([200, 204, 404, 501]));",
+            "pm.test('Device-link route does not activate devices from public check', () => pm.expect(pm.response.text().toLowerCase()).to.not.include('activated'))"
+          ]
+        }
+      }]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.variables.set('request_timestamp', new Date().toISOString());",
+          "console.log('SkyGrid Runway validation:', pm.info.requestName, pm.variables.get('request_timestamp'));"
+        ]
+      }
+    }
+  ]
+}
