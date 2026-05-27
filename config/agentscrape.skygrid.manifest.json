@@ -1,0 +1,137 @@
+{
+  "service": "AgentScrape",
+  "tagline": "Pay-per-call web scraping for AI agents — no signup, no API keys, just USDC",
+  "version": "0.6.0",
+  "skygrid_role": "public_web_proof_collector",
+  "mode": "controlled_pilot",
+  "payTo": "0x3F3337295fea3613A5f128a8E834A0dca30f9E9a",
+  "network": "eip155:8453",
+  "facilitator": "https://api.cdp.coinbase.com/platform/v2/x402",
+  "payment_guardrails": {
+    "asset": "USDC",
+    "first_budget_cap_usd": 1.0,
+    "default_per_run_cap_usd": 0.05,
+    "unit_price_usd": 0.001,
+    "max_calls_per_default_run": 50,
+    "stop_on_error": true,
+    "stop_on_private_data_detection": true,
+    "operator_review_required_before_paid_workflow": true
+  },
+  "surfaces": {
+    "http": {
+      "description": "Direct HTTP API with x402 payment gate",
+      "endpoints": [
+        "POST /scrape",
+        "POST /extract",
+        "POST /screenshot",
+        "POST /metadata",
+        "POST /workflow",
+        "POST /session"
+      ],
+      "free_tier": {
+        "limit_per_wallet": 10,
+        "window_days": 30,
+        "header": "x402-payer"
+      }
+    },
+    "mcp": {
+      "description": "MCP Streamable HTTP transport for agent frameworks",
+      "endpoint": "POST /mcp",
+      "tools": [
+        "scrape_webpage",
+        "extract_structured_data",
+        "screenshot_webpage",
+        "extract_metadata",
+        "create_browser_session",
+        "run_workflow"
+      ]
+    }
+  },
+  "tools": {
+    "scrape": {
+      "price": "$0.001",
+      "method": "POST",
+      "description": "Scrape any URL to markdown/html/text/json",
+      "skygrid_default": "allow_public_allowlisted_only"
+    },
+    "extract": {
+      "price": "$0.001",
+      "method": "POST",
+      "description": "AI-powered structured extraction",
+      "skygrid_default": "allow_public_allowlisted_only"
+    },
+    "screenshot": {
+      "price": "$0.001",
+      "method": "POST",
+      "description": "PNG screenshot with viewport control",
+      "skygrid_default": "preferred_first_use"
+    },
+    "metadata": {
+      "price": "$0.001",
+      "method": "POST",
+      "description": "Extract title, OG, Twitter, JSON-LD",
+      "skygrid_default": "preferred_first_use"
+    },
+    "workflow": {
+      "price": "$0.001",
+      "method": "POST",
+      "description": "Multi-step atomic execution",
+      "skygrid_default": "operator_review_required"
+    },
+    "session": {
+      "price": "$0.001",
+      "method": "POST",
+      "description": "Stateful browser session",
+      "skygrid_default": "operator_review_required"
+    }
+  },
+  "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+  "sentinel": {
+    "default": "fail_closed",
+    "before_payment": [
+      "url_must_be_public",
+      "domain_must_be_allowlisted",
+      "tool_must_be_allowlisted",
+      "cost_must_fit_budget",
+      "pii_risk_must_be_low",
+      "proof_reason_must_be_recorded"
+    ],
+    "after_response": [
+      "hash_output",
+      "redact_sensitive_material",
+      "record_cost",
+      "record_timestamp",
+      "attach_to_proof_log"
+    ]
+  },
+  "allowlisted_domains": [
+    "aura-sky-skygrid-protocol-staging.b12sites.com",
+    "github.com",
+    "vercel.app",
+    "mvpuknowme.com"
+  ],
+  "blocked_targets": [
+    "private_dashboards",
+    "authenticated_accounts",
+    "wallets",
+    "secret_bearing_urls",
+    "medical_or_private_personal_data",
+    "login_required_pages",
+    "uncapped_paid_workflows"
+  ],
+  "proof_log_schema": {
+    "event_type": "agentscrape_proof_capture",
+    "tool": "metadata|screenshot|scrape|extract|workflow|session",
+    "url": "https://public.example/path",
+    "domain": "public.example",
+    "cost_usd": "0.001",
+    "network": "eip155:8453",
+    "payment_model": "x402",
+    "status": "allowed|blocked",
+    "sentinel_decision": "allow|block",
+    "reason": "public proof packet",
+    "output_hash": "sha256:...",
+    "timestamp": "ISO-8601",
+    "operator": "Michael Vincent Patrick / MVPuknowme"
+  }
+}
