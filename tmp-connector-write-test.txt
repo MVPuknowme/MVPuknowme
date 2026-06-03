@@ -1,0 +1,1 @@
+connector write test for Aura-core; safe to delete
