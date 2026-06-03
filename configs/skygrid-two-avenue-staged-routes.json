@@ -1,0 +1,84 @@
+{
+  "service": "SKYGRID Emergency Data On-Ramp",
+  "mode": "controlled_pilot",
+  "sentinel": "fail_closed",
+  "public_language": "advisory_proof_first",
+  "avenues": {
+    "pc_app": {
+      "name": "PC App / Operator Interface",
+      "route": "/interface",
+      "purpose": "Desktop/operator control surface for route health, proof packet review, and staged emergency-readiness preflight.",
+      "allowed_actions": [
+        "view_status",
+        "run_preflight",
+        "review_proof_packet",
+        "prepare_operator_approval"
+      ],
+      "blocked_actions": [
+        "production_failover_without_approval",
+        "payment_execution",
+        "private_data_movement",
+        "device_activation_without_consent"
+      ]
+    },
+    "devices": {
+      "name": "Device Onboarding / Community Capacity",
+      "route": "/api/stripe/device-link",
+      "purpose": "Staged device onboarding status for opted-in capacity leasing and emergency-readiness participation.",
+      "allowed_actions": [
+        "show_staged_status",
+        "explain_consent_requirement",
+        "collect_operator_review_state",
+        "prepare_capacity_preflight"
+      ],
+      "blocked_actions": [
+        "automatic_device_activation",
+        "background_device_use",
+        "uncontracted_compute_or_storage_use",
+        "payment_execution_from_public_route"
+      ]
+    }
+  },
+  "aws_onboarding": {
+    "route": "/api/intake",
+    "purpose": "Emergency onboarding path for AWS Lambda container and DynamoDB big-data readiness records.",
+    "status": "staged_advisory",
+    "backend_targets": [
+      "aws_lambda_containers",
+      "dynamodb_big_data_records",
+      "cloudwatch_proof_logs",
+      "api_gateway_health_mirror"
+    ],
+    "blocked_actions": [
+      "private_data_dumping",
+      "credential_collection",
+      "production_cutover_without_operator_approval"
+    ]
+  },
+  "test_token_lanes": {
+    "purpose": "Sandbox-only simulated token movement and fee-readiness checks.",
+    "real_funds_allowed": false,
+    "mainnet_allowed": false,
+    "lanes": {
+      "solana_devnet": {
+        "status": "operator_supplied_faucet_required",
+        "allowed": "test_token_simulation_only"
+      },
+      "ethereum_sepolia": {
+        "status": "testnet_faucet_available",
+        "allowed": "test_eth_simulation_only"
+      },
+      "megaeth_testnet": {
+        "status": "testnet_docs_available",
+        "allowed": "test_eth_simulation_only"
+      }
+    }
+  },
+  "five_advisers_required": [
+    "sentinel_safety",
+    "route_infrastructure",
+    "data_privacy",
+    "community_capacity",
+    "proof_audit"
+  ]
+}
