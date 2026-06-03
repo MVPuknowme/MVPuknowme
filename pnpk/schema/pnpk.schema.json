@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mvpuknowme.github.io/pnpk/schema/pnpk.schema.json",
+  "title": "PNPK Bridge Proof Packet",
+  "description": "Draft schema for Patrick Newman Postman Kafka Bridge Packet files. PNPK files are non-executable proof packets.",
+  "type": "object",
+  "required": [
+    "pnpk_version",
+    "packet_type",
+    "service",
+    "created_at",
+    "sentinel",
+    "execution"
+  ],
+  "properties": {
+    "pnpk_version": {
+      "type": "string",
+      "description": "PNPK format version, for example 0.1.0."
+    },
+    "packet_type": {
+      "type": "string",
+      "enum": [
+        "postman_kafka_bridge_proof",
+        "route_health_proof",
+        "sentinel_preflight",
+        "device_onboarding_preflight",
+        "emergency_on_ramp_check",
+        "sandbox_token_simulation"
+      ]
+    },
+    "service": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "origin": {
+      "type": "object",
+      "properties": {
+        "creator": { "type": "string" },
+        "project": { "type": "string" },
+        "contact": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "sentinel": {
+      "type": "object",
+      "required": ["decision"],
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": ["ready", "allowed", "blocked", "pending", "unsafe"]
+        },
+        "reason": { "type": "string" },
+        "operator_approval_required": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "proof": {
+      "type": "object",
+      "properties": {
+        "route": { "type": "string" },
+        "expected_status": { "type": "integer" },
+        "observed_status": { "type": "integer" },
+        "postman_collection": { "type": "string" },
+        "newman_run_id": { "type": "string" },
+        "kafka_topic": { "type": "string" },
+        "proof_reference": { "type": "string" },
+        "hash": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "execution": {
+      "type": "object",
+      "required": [
+        "executable",
+        "payments_executed",
+        "devices_activated",
+        "private_data_moved"
+      ],
+      "properties": {
+        "executable": { "const": false },
+        "payments_executed": { "const": false },
+        "devices_activated": { "const": false },
+        "private_data_moved": { "const": false },
+        "production_failover_triggered": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
