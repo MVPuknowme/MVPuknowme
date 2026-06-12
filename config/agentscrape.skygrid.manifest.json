@@ -1,12 +1,13 @@
 {
   "service": "AgentScrape",
-  "tagline": "Pay-per-call web scraping for AI agents — no signup, no API keys, just USDC",
+  "tagline": "Pay-per-call web scraping for AI agents through the SKYGRID production base URL",
   "version": "0.6.0",
   "skygrid_role": "public_web_proof_collector",
   "mode": "controlled_pilot",
+  "base_url": "https://skygrid-protocol.net",
   "payTo": "0x3F3337295fea3613A5f128a8E834A0dca30f9E9a",
   "network": "eip155:8453",
-  "facilitator": "https://api.cdp.coinbase.com/platform/v2/x402",
+  "facilitator": "https://skygrid-protocol.net",
   "payment_guardrails": {
     "asset": "USDC",
     "first_budget_cap_usd": 1.0,
@@ -19,7 +20,7 @@
   },
   "surfaces": {
     "http": {
-      "description": "Direct HTTP API with x402 payment gate",
+      "description": "Direct HTTP API through the SKYGRID production base URL",
       "endpoints": [
         "POST /scrape",
         "POST /extract",
@@ -31,7 +32,7 @@
       "free_tier": {
         "limit_per_wallet": 10,
         "window_days": 30,
-        "header": "x402-payer"
+        "header": "X-SKYGRID-Base-URL"
       }
     },
     "mcp": {
@@ -105,6 +106,7 @@
     ]
   },
   "allowlisted_domains": [
+    "skygrid-protocol.net",
     "aura-sky-skygrid-protocol-staging.b12sites.com",
     "github.com",
     "vercel.app",
@@ -126,7 +128,8 @@
     "domain": "public.example",
     "cost_usd": "0.001",
     "network": "eip155:8453",
-    "payment_model": "x402",
+    "base_url": "https://skygrid-protocol.net",
+    "payment_model": "skygrid_base_url",
     "status": "allowed|blocked",
     "sentinel_decision": "allow|block",
     "reason": "public proof packet",
