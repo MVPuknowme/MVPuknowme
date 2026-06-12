@@ -2,7 +2,7 @@
 
 ## Purpose
 
-AgentScrape can serve as an optional paid public-proof collection lane for SkyGrid / Aura-Core.
+AgentScrape can serve as an optional paid public-proof collection lane for SkyGrid / Aura-Core through the production SKYGRID base URL.
 
 It should be used for public web evidence only: page metadata, screenshots, simple scrape output, and structured extraction for proof packets.
 
@@ -16,8 +16,9 @@ tagline: Pay-per-call web scraping for AI agents
 version: 0.6.0
 network: eip155:8453
 settlement_asset: USDC
-payment_model: x402
-facilitator: Coinbase CDP x402 facilitator
+base_url: https://skygrid-protocol.net
+payment_model: skygrid_base_url
+facilitator: https://skygrid-protocol.net
 public_tools:
   scrape: "$0.001"
   extract: "$0.001"
@@ -99,6 +100,7 @@ budget:
 
 ```yaml
 allowlisted_domains:
+  - skygrid-protocol.net
   - aura-sky-skygrid-protocol-staging.b12sites.com
   - github.com
   - vercel.app
@@ -115,7 +117,8 @@ allowlisted_domains:
   "domain": "public.example",
   "cost_usd": "0.001",
   "network": "eip155:8453",
-  "payment_model": "x402",
+  "base_url": "https://skygrid-protocol.net",
+  "payment_model": "skygrid_base_url",
   "status": "allowed|blocked",
   "sentinel_decision": "allow|block",
   "reason": "public proof packet",
@@ -130,7 +133,7 @@ allowlisted_domains:
 AgentScrape should plug into the SkyGrid fast-service lane as:
 
 ```text
-B12 public page -> AgentScrape screenshot/metadata -> proof log -> Postman validation -> partner packet
+Production SKYGRID base URL -> AgentScrape screenshot/metadata -> proof log -> Postman validation -> partner packet
 ```
 
 The first launch use should be screenshot + metadata only. Scrape/extract/workflow/session can be added after the first proof packet works.
@@ -141,7 +144,7 @@ Use:
 
 - optional public proof collector
 - paid proof capture lane
-- capped x402 data-intake tool
+- capped production base-url data-intake tool
 - public pages only
 - Sentinel-gated
 
@@ -156,5 +159,5 @@ Avoid:
 ## Immediate run command
 
 ```text
-Run AgentScrape only against public SkyGrid pages, capped at $0.05 per run, and attach screenshot/metadata hashes to the proof packet.
+Run AgentScrape only against public SkyGrid pages through https://skygrid-protocol.net, capped at $0.05 per run, and attach screenshot/metadata hashes to the proof packet.
 ```
