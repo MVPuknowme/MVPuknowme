@@ -29,19 +29,23 @@ Do **not** publish full OpenAI project IDs, API keys, tokens, wallet secrets, Ve
 - [ ] Attach `skygrid-protocol.net` to the healthy Vercel project rather than the 404 project.
 - [x] Keep public routes controlled-pilot/advisory only.
 
-## Verified live target
+## Verified live targets
 
 ```text
+https://aura-core.vercel.app
 https://aura-core-mvpuknowme-home-e539c0b1.vercel.app
 ```
+
+Use `https://aura-core.vercel.app` as the public alias for route checks and outreach until `skygrid-protocol.net` is attached to the healthy Vercel project.
 
 ## Route notes
 
 - `https://aura-core-t2t5.vercel.app/health.json` returned `404` during verification.
 - `https://aura-core-t2t5.vercel.app/api/highway/status` returned `404` during verification.
-- `https://aura-core-mvpuknowme-home-e539c0b1.vercel.app/health.json` returned `200` JSON during verification.
-- `https://aura-core-mvpuknowme-home-e539c0b1.vercel.app/api/highway/status` returned `200` JSON during verification.
-- `https://aura-core-mvpuknowme-home-e539c0b1.vercel.app/api/pay/quote?amount=25` returned `200` quote-only JSON during verification.
+- `https://aura-core.vercel.app/health.json` returned `200` JSON during verification.
+- `https://aura-core.vercel.app/api/highway/status` returned `200` JSON during verification.
+- `https://aura-core.vercel.app/api/highway/postman` returned `200` JSON-compatible response during verification.
+- `https://aura-core.vercel.app/api/pay/quote?amount=25` returned `200` quote-only JSON during verification.
 
 ## Product language
 
