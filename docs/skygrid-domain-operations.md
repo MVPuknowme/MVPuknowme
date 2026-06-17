@@ -10,11 +10,19 @@ The intended canonical production domain is:
 https://skygrid-protocol.net
 ```
 
-The currently verified Vercel preview/runtime target is:
+The currently verified public Vercel runtime target is:
 
 ```text
-https://aura-core-t2t5.vercel.app
+https://aura-core.vercel.app
 ```
+
+The internal/team Vercel alias observed healthy for some checks is:
+
+```text
+https://aura-core-mvpuknowme-home-e539c0b1.vercel.app
+```
+
+Do **not** use `https://aura-core-t2t5.vercel.app` as the canonical target. It has returned route `404` during verification and should be treated as a stale/bad route until proven otherwise.
 
 ## Recommended custody model
 
@@ -47,7 +55,7 @@ Do not assume those values if Vercel displays project-specific instructions.
 
 ## Domain attachment checklist
 
-- [ ] Confirm the correct Vercel project owns the working deployment.
+- [ ] Confirm the correct Vercel project owns the working `aura-core.vercel.app` deployment.
 - [ ] Confirm the production branch is the intended branch.
 - [ ] Add `skygrid-protocol.net` to the correct Vercel project.
 - [ ] Add `www.skygrid-protocol.net` to the same Vercel project.
@@ -55,7 +63,23 @@ Do not assume those values if Vercel displays project-specific instructions.
 - [ ] Confirm DNS records at the registrar/DNS provider.
 - [ ] Confirm SSL/TLS is issued and active.
 - [ ] Run `SKYGRID Public Route Check` from GitHub Actions.
-- [ ] Confirm `/`, `/health.json`, `/api/highway/status`, and quote-only endpoints return healthy responses.
+- [ ] Confirm `/`, `/health.json`, `/api/highway/status`, `/api/highway/postman`, and quote-only endpoints return healthy responses.
+
+## Decommission stale route targets
+
+Treat the following as stale unless later revalidated:
+
+```text
+https://aura-core-t2t5.vercel.app
+```
+
+Cleanup order:
+
+1. Remove it from public copy and partner outreach.
+2. Remove it from route-check defaults.
+3. Detach any custom domain from that Vercel project.
+4. Keep a short historical note explaining why it was retired.
+5. Delete the stale Vercel project only after the canonical domain and `aura-core.vercel.app` pass route checks.
 
 ## Brand-reservation candidates
 
