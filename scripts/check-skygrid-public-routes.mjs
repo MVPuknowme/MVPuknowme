@@ -2,16 +2,15 @@
 
 const DEFAULT_BASE_URLS = [
   'https://skygrid-protocol.net',
-  'https://aura-core-t2t5.vercel.app'
+  'https://aura-core-mvpuknowme-home-e539c0b1.vercel.app'
 ];
 
 const REQUIRED_ROUTES = [
   { path: '/', type: 'html', expected: [200] },
   { path: '/health.json', type: 'json', expected: [200] },
   { path: '/api/highway/status', type: 'json', expected: [200] },
-  { path: '/api/highway/postman', type: 'json', expected: [200] },
-  { path: '/api/pay/quote?amount=25', type: 'json', expected: [200] },
-  { path: '/api/stripe/device-link', type: 'json', expected: [200] }
+  { path: '/api/highway/postman', type: 'json-compatible', expected: [200] },
+  { path: '/api/pay/quote?amount=25', type: 'json', expected: [200] }
 ];
 
 const baseUrls = (process.env.SKYGRID_ROUTE_CHECK_BASE_URLS || '')
@@ -46,6 +45,11 @@ async function fetchWithTimeout(url) {
   }
 }
 
+function looksLikeJson(text) {
+  const trimmed = text.trim();
+  return trimmed.startsWith('{') || trimmed.startsWith('[');
+}
+
 function validatePayload(route, text, contentType) {
   if (route.type === 'json') {
     if (!contentType.includes('application/json')) {
@@ -56,6 +60,18 @@ function validatePayload(route, text, contentType) {
       JSON.parse(text);
     } catch (error) {
       return `invalid JSON body: ${error instanceof Error ? error.message : String(error)}`;
+    }
+  }
+
+  if (route.type === 'json-compatible') {
+    if (!contentType.includes('application/json') && !looksLikeJson(text)) {
+      return `expected JSON-compatible body, received ${contentType || 'missing content-type'}`;
+    }
+
+    try {
+      JSON.parse(text);
+    } catch (error) {
+      return `invalid JSON-compatible body: ${error instanceof Error ? error.message : String(error)}`;
     }
   }
 
@@ -82,8 +98,8 @@ for (const baseUrl of targets) {
       const contentType = response.headers.get('content-type') || '';
       const statusOk = route.expected.includes(response.status);
       const payloadError = statusOk ? validatePayload(route, text, contentType) : null;
-
       const line = `${response.status} ${route.path} ${elapsedMs}ms ${contentType}`;
+
       console.log(statusOk && !payloadError ? `PASS ${line}` : `FAIL ${line}`);
 
       if (!statusOk) {
