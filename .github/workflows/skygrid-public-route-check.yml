@@ -1,0 +1,46 @@
+name: SKYGRID Public Route Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_urls:
+        description: 'Comma-separated base URLs to check'
+        required: false
+        default: 'https://skygrid-protocol.net,https://aura-core-t2t5.vercel.app'
+  push:
+    branches:
+      - main
+    paths:
+      - 'api/**'
+      - 'lib/**'
+      - 'scripts/check-skygrid-public-routes.mjs'
+      - 'vercel.json'
+      - 'app.js'
+      - 'package.json'
+      - '.github/workflows/skygrid-public-route-check.yml'
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+env:
+  SKYGRID_ROUTE_CHECK_TIMEOUT_MS: '15000'
+
+jobs:
+  route-check:
+    name: Check public SKYGRID routes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run route check
+        env:
+          SKYGRID_ROUTE_CHECK_BASE_URLS: ${{ github.event.inputs.base_urls || 'https://skygrid-protocol.net,https://aura-core-t2t5.vercel.app' }}
+        run: node scripts/check-skygrid-public-routes.mjs
