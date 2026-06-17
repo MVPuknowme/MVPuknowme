@@ -1,0 +1,44 @@
+{
+  "id": "skygrid-public-controlled-pilot",
+  "name": "SKYGRID Public Controlled Pilot",
+  "values": [
+    {
+      "key": "skygrid_base",
+      "value": "https://aura-core.vercel.app",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "canonical_base",
+      "value": "https://skygrid-protocol.net",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "web3_ref_base",
+      "value": "https://aura-core.vercel.app",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "flaky_base",
+      "value": "https://aura-core.vercel.app",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "auth_mode",
+      "value": "none-for-public-routes",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_using": "SKYGRID-safe-template",
+  "_skygrid_notes": [
+    "Public Vercel routes must use HTTPS.",
+    "Public health checks use GET /health.json, not PATCH /health.",
+    "Do not attach AWS SigV4 auth or GitHub tokens to public Vercel route tests.",
+    "Do not store real tokens, AWS keys, private keys, wallet seeds, or Postman secrets in this file."
+  ]
+}
