@@ -1,8 +1,26 @@
-# SkyGrid Vercel Domain 404 Repair
+# SKYGRID Vercel Domain 404 Repair — Deprecated Target Note
 
-## Situation
+## Current status
 
-The canonical domain `https://skygrid-protocol.net` resolves and responds quickly, but every required SkyGrid public route returns HTTP 404.
+This note is retained as historical evidence of a prior `404` failure pattern.
+
+Do **not** use `https://aura-core-t2t5.vercel.app` as the canonical target. Later verification showed that `aura-core-t2t5` returned route `404` for required SKYGRID endpoints.
+
+Use the healthy public Vercel alias instead:
+
+```text
+https://aura-core.vercel.app
+```
+
+Canonical domain still intended:
+
+```text
+https://skygrid-protocol.net
+```
+
+## Original failure pattern
+
+The canonical domain `https://skygrid-protocol.net` resolved and responded quickly, but required SkyGrid public routes returned HTTP `404`.
 
 Observed walk test:
 
@@ -24,15 +42,15 @@ Observed walk test:
 
 ## Diagnosis
 
-DNS/TLS is working and Vercel edge is reachable. The failure is not a DNS failure.
+DNS/TLS was working and Vercel edge was reachable. The failure was not a DNS failure.
 
-Likely cause:
+Likely causes were:
 
 ```yaml
 root_cause:
-  - skygrid-protocol.net is attached to the wrong Vercel project
-  - or production alias points to a deployment with no SkyGrid runtime output
-  - or the runtime project is missing Vercel rewrites/API handler wiring
+  - skygrid-protocol.net attached to the wrong Vercel project
+  - production alias pointed to a deployment with no SkyGrid runtime output
+  - runtime project missing Vercel rewrites/API handler wiring
 ```
 
 ## Required product language
@@ -51,24 +69,26 @@ Vercel's role is:
 public runtime/front door for controlled-pilot status, proof, quote, and demo routes
 ```
 
-## Correct target
+## Correct target now
 
-Attach the domain to the Vercel project that owns the working deployment:
-
-```text
-https://aura-core-t2t5.vercel.app/
-```
-
-Canonical domain:
+Attach the canonical domain to the Vercel project that serves:
 
 ```text
-https://skygrid-protocol.net
+https://aura-core.vercel.app
 ```
+
+Do not attach the canonical domain to:
+
+```text
+https://aura-core-t2t5.vercel.app
+```
+
+unless that target is revalidated and all required routes pass.
 
 ## Vercel dashboard repair steps
 
 1. Open Vercel dashboard.
-2. Open the project that owns `aura-core-t2t5.vercel.app`.
+2. Open the project that owns `aura-core.vercel.app`.
 3. Go to **Settings → Domains**.
 4. Add:
 
@@ -77,13 +97,13 @@ skygrid-protocol.net
 www.skygrid-protocol.net
 ```
 
-5. If Vercel says the domain is already assigned elsewhere, remove it from the wrong project and re-add it to the project that owns `aura-core-t2t5.vercel.app`.
+5. If Vercel says the domain is already assigned elsewhere, remove it from the wrong project and re-add it to the project that owns `aura-core.vercel.app`.
 6. Confirm production deployment is assigned to the domain.
 7. Redeploy if needed.
 
 ## DNS records
 
-At the DNS provider:
+At the DNS provider, use the exact records Vercel shows. Common Vercel values are:
 
 ```text
 A      @      76.76.21.21
@@ -92,62 +112,25 @@ CNAME  www    cname.vercel-dns.com
 
 Use the exact project-specific value Vercel shows if Vercel provides one.
 
-## Runtime route repair if domain is attached correctly but routes still 404
-
-Create or confirm:
-
-```text
-api/runtime.mjs
-```
-
-With:
-
-```js
-export { default } from '../app.js';
-```
-
-Then confirm `vercel.json` contains rewrites:
-
-```json
-{
-  "version": 2,
-  "rewrites": [
-    { "source": "/", "destination": "/api/runtime" },
-    { "source": "/health.json", "destination": "/api/runtime" },
-    { "source": "/highway", "destination": "/api/runtime" },
-    { "source": "/api/highway/status", "destination": "/api/runtime" },
-    { "source": "/api/highway/flasks", "destination": "/api/runtime" },
-    { "source": "/api/highway/postman", "destination": "/api/runtime" },
-    { "source": "/dispatch", "destination": "/api/runtime" },
-    { "source": "/scenarios", "destination": "/api/runtime" },
-    { "source": "/rates", "destination": "/api/runtime" },
-    { "source": "/base", "destination": "/api/runtime" },
-    { "source": "/pay", "destination": "/api/runtime" },
-    { "source": "/api/pay/quote", "destination": "/api/runtime" },
-    { "source": "/api/stripe/device-link", "destination": "/api/runtime" }
-  ]
-}
-```
-
 ## Verification commands
 
-First compare the Vercel deployment URL:
+First verify the public Vercel alias:
 
 ```bash
-TEST="https://aura-core-t2t5.vercel.app"
+TEST="https://aura-core.vercel.app"
 
-for path in "/" "/health.json" "/highway" "/api/highway/status" "/dispatch" "/api/pay/quote?amount=25"; do
+for path in "/" "/health.json" "/api/highway/status" "/api/highway/postman" "/api/pay/quote?amount=25"; do
   echo "== $TEST$path =="
   curl -sS -o /dev/null -w "HTTP %{http_code} | %{time_total}s\n" "$TEST$path"
 done
 ```
 
-Then test canonical domain:
+Then test canonical domain after attachment:
 
 ```bash
 BASE="https://skygrid-protocol.net"
 
-for path in "/" "/health.json" "/highway" "/api/highway/status" "/api/pay/quote?amount=25"; do
+for path in "/" "/health.json" "/api/highway/status" "/api/highway/postman" "/api/pay/quote?amount=25"; do
   echo "== $BASE$path =="
   curl -sS -o /dev/null -w "HTTP %{http_code} | %{time_total}s\n" "$BASE$path"
 done
@@ -158,8 +141,8 @@ done
 ```text
 /                         200 or redirect to valid landing
 /health.json              200 JSON pulse
-/highway                  200 showcase page
 /api/highway/status       200 JSON route map
+/api/highway/postman      200 JSON-compatible proof route
 /api/pay/quote?amount=25  200 JSON quote-only response
 ```
 
@@ -178,34 +161,23 @@ Do not enable from public routes:
 ## Prompt for Vercel/Q/Codex
 
 ```text
-The domain skygrid-protocol.net resolves and reaches Vercel, but all required SkyGrid routes return HTTP 404. This means DNS/TLS is working, but the domain is attached to the wrong Vercel project, production alias, or route output.
+You are repairing the SKYGRID Emergency Data On-Ramp public runtime.
 
-Fix this as the SKYGRID Emergency Data On-Ramp public runtime, not a generic serverless app.
+Do not use stale aura-core-t2t5 route targets. The healthy public target is https://aura-core.vercel.app.
 
-Attach skygrid-protocol.net to the same Vercel project/deployment as aura-core-t2t5.vercel.app, or repair the production deployment with api/runtime.mjs and vercel.json rewrites.
-
-Required routes:
+Attach skygrid-protocol.net to the same Vercel project/deployment that serves aura-core.vercel.app, then verify:
 /
 /health.json
-/highway
 /api/highway/status
-/api/highway/flasks
 /api/highway/postman
-/dispatch
-/scenarios
-/rates
-/base
-/pay
 /api/pay/quote?amount=25
-/api/stripe/device-link
 
 Expected behavior:
 - / returns SkyGrid landing/runtime page
 - /health.json returns JSON health/pulse
-- /highway returns Highway API showcase
 - /api/highway/status returns JSON route map
+- /api/highway/postman returns JSON proof metadata or JSON-compatible response
 - /api/pay/quote?amount=25 returns quote-only JSON
-- /api/stripe/device-link returns safe staged/advisory status
 
 Do not execute payments, activate devices, or perform production failover from public routes.
 ```
