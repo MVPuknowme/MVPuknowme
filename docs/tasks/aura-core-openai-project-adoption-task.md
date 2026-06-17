@@ -20,14 +20,28 @@ Do **not** publish full OpenAI project IDs, API keys, tokens, wallet secrets, Ve
 
 ## Execution queue
 
-- [ ] Confirm repo ownership and whether canonical runtime lives here or in a separate Aura-Core repo.
-- [ ] Keep sanitized project metadata in `docs/aura-core-openai-project-adoption.md`.
-- [ ] Add `.env.example` with variable names only, no real values.
-- [ ] Add route-health GitHub Action for `/`, `/health.json`, `/api/highway/status`, and `/api/pay/quote?amount=25`.
+- [x] Confirm repo ownership and deployment reality: Vercel project `aura-core` is the currently healthy runtime target; `aura-core-t2t5` is returning route 404s.
+- [x] Keep sanitized project metadata in `docs/aura-core-openai-project-adoption.md`.
+- [x] Add `.env.example` with variable names only, no real values.
+- [x] Add route-health GitHub Action for `/`, `/health.json`, `/api/highway/status`, `/api/highway/postman`, and `/api/pay/quote?amount=25`.
 - [ ] Add deployment and security issue templates if repository Issues are enabled later.
 - [ ] Decide where full sensitive project metadata should live: private repo, vault, or local-only.
-- [ ] Confirm Vercel project and custom domain attachment for `skygrid-protocol.net`.
-- [ ] Keep public routes controlled-pilot/advisory only.
+- [ ] Attach `skygrid-protocol.net` to the healthy Vercel project rather than the 404 project.
+- [x] Keep public routes controlled-pilot/advisory only.
+
+## Verified live target
+
+```text
+https://aura-core-mvpuknowme-home-e539c0b1.vercel.app
+```
+
+## Route notes
+
+- `https://aura-core-t2t5.vercel.app/health.json` returned `404` during verification.
+- `https://aura-core-t2t5.vercel.app/api/highway/status` returned `404` during verification.
+- `https://aura-core-mvpuknowme-home-e539c0b1.vercel.app/health.json` returned `200` JSON during verification.
+- `https://aura-core-mvpuknowme-home-e539c0b1.vercel.app/api/highway/status` returned `200` JSON during verification.
+- `https://aura-core-mvpuknowme-home-e539c0b1.vercel.app/api/pay/quote?amount=25` returned `200` quote-only JSON during verification.
 
 ## Product language
 
