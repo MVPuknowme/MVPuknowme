@@ -2,7 +2,7 @@
 
 const DEFAULT_BASE_URLS = [
   'https://skygrid-protocol.net',
-  'https://aura-core-mvpuknowme-home-e539c0b1.vercel.app'
+  'https://aura-core.vercel.app'
 ];
 
 const REQUIRED_ROUTES = [
