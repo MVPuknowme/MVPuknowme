@@ -9,6 +9,7 @@ on:
         default: 'https://skygrid-protocol.net,https://aura-core-t2t5.vercel.app'
   push:
     branches:
+      - MVPuknowme
       - main
     paths:
       - 'api/**'
