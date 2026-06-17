@@ -40,11 +40,15 @@ connectors:
       - landing route
       - health route
       - highway/demo/status routes
+    healthy_public_target:
+      - https://aura-core.vercel.app
+    stale_target_do_not_use:
+      - https://aura-core-t2t5.vercel.app
     current_blocker:
-      - skygrid-protocol.net returns HTTP 404 for all tested routes
+      - skygrid-protocol.net still needs final attachment/verification against the healthy aura-core project
     required_fix:
-      - attach skygrid-protocol.net to the project that owns aura-core-t2t5.vercel.app
-      - or repair rewrites and api/runtime handler
+      - attach skygrid-protocol.net to the project that owns the healthy aura-core.vercel.app runtime
+      - remove stale aura-core-t2t5 references from public copy, checks, and partner outreach
 
   aws_q:
     role: emergency_data_on_ramp_backend
@@ -116,7 +120,8 @@ connectors:
 ### Phase 2: Runtime deployment
 
 - Connect `skygrid-protocol.net` to the correct Vercel project.
-- Required target project: project that owns `aura-core-t2t5.vercel.app`.
+- Required public target while canonical domain is pending: `https://aura-core.vercel.app`.
+- Do not use `https://aura-core-t2t5.vercel.app` as a route target unless it is revalidated.
 - Rerun walk test.
 
 ### Phase 3: Proof deployment
@@ -136,24 +141,24 @@ connectors:
 ```yaml
 gates:
   domain:
-    pass: skygrid-protocol.net resolves
-    current: pass
+    pass: skygrid-protocol.net resolves and points to healthy aura-core runtime
+    current: pending_attachment_verification
 
   vercel_runtime:
     pass: /health.json returns 200
-    current: fail_404
+    current: pass_on_aura_core_vercel_app
 
   postman:
     pass: collection validates public routes
-    current: waiting_on_vercel_runtime
+    current: ready_to_run_against_aura_core_vercel_app
 
   aws_on_ramp:
     pass: AWS Q uses Emergency Data On-Ramp language and maps backend resources
     current: language_ready
 
   b12:
-    pass: runway widget points to canonical domain
-    current: ready_but_waiting_on_vercel_runtime
+    pass: runway widget points to canonical domain after attachment, or aura-core.vercel.app during transition
+    current: ready_but_waiting_on_domain_attachment
 
   email:
     pass: mvpuknowme@skygrid-protocol.net sends and receives
@@ -163,26 +168,24 @@ gates:
 ## Required public route walk test
 
 ```bash
-BASE="https://skygrid-protocol.net"
+BASE="https://aura-core.vercel.app"
 
 for path in \
   "/" \
   "/health.json" \
-  "/highway" \
   "/api/highway/status" \
-  "/api/highway/flasks" \
   "/api/highway/postman" \
-  "/dispatch" \
-  "/scenarios" \
-  "/rates" \
-  "/base" \
-  "/pay" \
-  "/api/pay/quote?amount=25" \
-  "/api/stripe/device-link"
+  "/api/pay/quote?amount=25"
 do
   echo "== $path =="
   curl -sS -o /dev/null -w "HTTP %{http_code} | %{time_total}s\n" "$BASE$path"
 done
+```
+
+After `skygrid-protocol.net` is attached to the healthy Vercel project, rerun the same test with:
+
+```bash
+BASE="https://skygrid-protocol.net"
 ```
 
 ## Connector instruction prompt
@@ -208,14 +211,14 @@ Do not activate devices.
 Do not perform production failover.
 Do not move private data.
 
-Current blocker: skygrid-protocol.net reaches Vercel but all required routes return 404. Fix by attaching the domain to the project that owns aura-core-t2t5.vercel.app or by repairing the runtime rewrites and api/runtime handler.
+Current blocker: skygrid-protocol.net must be attached to the healthy Vercel project that serves https://aura-core.vercel.app. Do not route partners to stale aura-core-t2t5 links.
 ```
 
 ## Deployment status
 
 ```yaml
 status: connector_alignment_deployed
-next_action: fix_vercel_domain_or_route_attachment
+next_action: attach_skygrid_protocol_domain_to_healthy_aura_core_project
 sentinel: fail_closed
 proof_required: yes
 ```
