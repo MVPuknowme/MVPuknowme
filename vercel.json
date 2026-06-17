@@ -84,6 +84,10 @@
     {
       "source": "/api/highway/postman",
       "destination": "/api/runtime?__path=/api/highway/postman"
+    },
+    {
+      "source": "/api/stripe/device-link",
+      "destination": "/api/runtime?__path=/api/stripe/device-link"
     }
   ],
   "cleanUrls": true,
@@ -98,7 +102,7 @@
         },
         {
           "key": "X-Phoenix-Version",
-          "value": "1.3.9-runtime-route-coverage"
+          "value": "1.3.10-controlled-pilot-runtime"
         }
       ]
     }
