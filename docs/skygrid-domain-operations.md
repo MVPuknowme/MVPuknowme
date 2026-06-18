@@ -4,13 +4,15 @@
 
 Protect the SKYGRID brand and keep the public front door stable.
 
-The intended canonical production domain is:
+The canonical app/interface domain is:
 
 ```text
-https://skygrid-protocol.net
+https://aurcore.skygrid-protocol.net
 ```
 
-The currently verified public Vercel runtime target is:
+All SKYGRID apps and interfaces should route through this subdomain once DNS and Vercel aliasing are active.
+
+The verified Vercel fallback/proof target is:
 
 ```text
 https://aura-core.vercel.app
@@ -23,6 +25,18 @@ https://aura-core-mvpuknowme-home-e539c0b1.vercel.app
 ```
 
 Do **not** use `https://aura-core-t2t5.vercel.app` as the canonical target. It has returned route `404` during verification and should be treated as a stale/bad route until proven otherwise.
+
+## Live DNS note
+
+At the time of this update, `aurcore.skygrid-protocol.net` was set as canonical in repo configuration, but external DNS still needed to resolve publicly before route checks could pass from all environments.
+
+Required DNS intent:
+
+```text
+CNAME  aurcore  cname.vercel-dns.com
+```
+
+Use the exact Vercel-provided target if Vercel gives a project-specific value.
 
 ## Recommended custody model
 
@@ -44,11 +58,12 @@ Use Vercel for:
 
 ## Standard Vercel DNS pattern
 
-Use the exact DNS records Vercel shows for the target project. The common pattern is:
+Use the exact DNS records Vercel shows for the target project. Common Vercel values are:
 
 ```text
-A      @      76.76.21.21
-CNAME  www    cname.vercel-dns.com
+A      @        76.76.21.21
+CNAME  www      cname.vercel-dns.com
+CNAME  aurcore  cname.vercel-dns.com
 ```
 
 Do not assume those values if Vercel displays project-specific instructions.
@@ -57,9 +72,9 @@ Do not assume those values if Vercel displays project-specific instructions.
 
 - [ ] Confirm the correct Vercel project owns the working `aura-core.vercel.app` deployment.
 - [ ] Confirm the production branch is the intended branch.
-- [ ] Add `skygrid-protocol.net` to the correct Vercel project.
-- [ ] Add `www.skygrid-protocol.net` to the same Vercel project.
-- [ ] Remove the domain from any wrong Vercel project if Vercel reports a conflict.
+- [ ] Add `aurcore.skygrid-protocol.net` to the correct Vercel project.
+- [ ] Add DNS record for `aurcore` at the DNS provider.
+- [ ] Remove conflicting domains from any wrong Vercel project if Vercel reports a conflict.
 - [ ] Confirm DNS records at the registrar/DNS provider.
 - [ ] Confirm SSL/TLS is issued and active.
 - [ ] Run `SKYGRID Public Route Check` from GitHub Actions.
@@ -71,15 +86,16 @@ Treat the following as stale unless later revalidated:
 
 ```text
 https://aura-core-t2t5.vercel.app
+https://skygrid-protocol.net
 ```
 
 Cleanup order:
 
-1. Remove it from public copy and partner outreach.
-2. Remove it from route-check defaults.
-3. Detach any custom domain from that Vercel project.
-4. Keep a short historical note explaining why it was retired.
-5. Delete the stale Vercel project only after the canonical domain and `aura-core.vercel.app` pass route checks.
+1. Remove stale targets from public copy and partner outreach.
+2. Remove stale targets from route-check defaults.
+3. Detach any conflicting custom domains from wrong Vercel projects.
+4. Keep a short historical note explaining why each target was retired.
+5. Delete stale Vercel projects only after `aurcore.skygrid-protocol.net` and `aura-core.vercel.app` pass route checks.
 
 ## Brand-reservation candidates
 
