@@ -14,6 +14,14 @@ This does not perform live production failover. It deploys the operating instruc
 
 SKYGRID Emergency Data On-Ramp
 
+## Canonical app/interface domain
+
+```text
+https://aurcore.skygrid-protocol.net
+```
+
+All apps and interfaces route through this domain once DNS and Vercel aliasing are active.
+
 ## Canonical pilot offer
 
 SkyGrid Emergency-Ready Infrastructure Preflight
@@ -36,19 +44,23 @@ connectors:
   vercel:
     role: public_runtime_front_door
     owns:
-      - domain alias
+      - aurcore.skygrid-protocol.net domain alias
       - landing route
       - health route
       - highway/demo/status routes
-    healthy_public_target:
+    canonical_target:
+      - https://aurcore.skygrid-protocol.net
+    fallback_proof_target:
       - https://aura-core.vercel.app
     stale_target_do_not_use:
       - https://aura-core-t2t5.vercel.app
+      - https://skygrid-protocol.net
     current_blocker:
-      - skygrid-protocol.net still needs final attachment/verification against the healthy aura-core project
+      - aurcore.skygrid-protocol.net needs final Vercel domain attachment and DNS verification
     required_fix:
-      - attach skygrid-protocol.net to the project that owns the healthy aura-core.vercel.app runtime
-      - remove stale aura-core-t2t5 references from public copy, checks, and partner outreach
+      - attach aurcore.skygrid-protocol.net to the project that owns the healthy aura-core.vercel.app runtime
+      - add DNS CNAME aurcore -> cname.vercel-dns.com unless Vercel provides a project-specific value
+      - remove stale aura-core-t2t5 and parent-domain references from public copy, checks, and partner outreach
 
   aws_q:
     role: emergency_data_on_ramp_backend
@@ -119,8 +131,8 @@ connectors:
 
 ### Phase 2: Runtime deployment
 
-- Connect `skygrid-protocol.net` to the correct Vercel project.
-- Required public target while canonical domain is pending: `https://aura-core.vercel.app`.
+- Connect `aurcore.skygrid-protocol.net` to the correct Vercel project.
+- Required fallback proof target while DNS is pending: `https://aura-core.vercel.app`.
 - Do not use `https://aura-core-t2t5.vercel.app` as a route target unless it is revalidated.
 - Rerun walk test.
 
@@ -141,24 +153,24 @@ connectors:
 ```yaml
 gates:
   domain:
-    pass: skygrid-protocol.net resolves and points to healthy aura-core runtime
+    pass: aurcore.skygrid-protocol.net resolves and points to healthy aura-core runtime
     current: pending_attachment_verification
 
   vercel_runtime:
     pass: /health.json returns 200
-    current: pass_on_aura_core_vercel_app
+    current: pass_on_aura_core_vercel_app_fallback
 
   postman:
     pass: collection validates public routes
-    current: ready_to_run_against_aura_core_vercel_app
+    current: ready_to_run_against_aurcore_after_dns
 
   aws_on_ramp:
     pass: AWS Q uses Emergency Data On-Ramp language and maps backend resources
     current: language_ready
 
   b12:
-    pass: runway widget points to canonical domain after attachment, or aura-core.vercel.app during transition
-    current: ready_but_waiting_on_domain_attachment
+    pass: runway widget points to aurcore.skygrid-protocol.net
+    current: needs_link_update_after_domain_alias
 
   email:
     pass: mvpuknowme@skygrid-protocol.net sends and receives
@@ -168,7 +180,7 @@ gates:
 ## Required public route walk test
 
 ```bash
-BASE="https://aura-core.vercel.app"
+BASE="https://aurcore.skygrid-protocol.net"
 
 for path in \
   "/" \
@@ -182,10 +194,10 @@ do
 done
 ```
 
-After `skygrid-protocol.net` is attached to the healthy Vercel project, rerun the same test with:
+Fallback proof test while DNS is pending:
 
 ```bash
-BASE="https://skygrid-protocol.net"
+BASE="https://aura-core.vercel.app"
 ```
 
 ## Connector instruction prompt
@@ -211,14 +223,14 @@ Do not activate devices.
 Do not perform production failover.
 Do not move private data.
 
-Current blocker: skygrid-protocol.net must be attached to the healthy Vercel project that serves https://aura-core.vercel.app. Do not route partners to stale aura-core-t2t5 links.
+Current blocker: aurcore.skygrid-protocol.net must be attached to the healthy Vercel project that serves https://aura-core.vercel.app. Do not route partners to stale aura-core-t2t5 links or the parent domain as the app/interface URL.
 ```
 
 ## Deployment status
 
 ```yaml
 status: connector_alignment_deployed
-next_action: attach_skygrid_protocol_domain_to_healthy_aura_core_project
+next_action: attach_aurcore_subdomain_to_healthy_aura_core_project
 sentinel: fail_closed
 proof_required: yes
 ```
