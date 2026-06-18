@@ -1,0 +1,38 @@
+{
+  "service": "SKYGRID Emergency Data On-Ramp",
+  "network": "Aura-Core",
+  "canonical_app_domain": "https://aurcore.skygrid-protocol.net",
+  "fallback_proof_domain": "https://aura-core.vercel.app",
+  "domain_policy": {
+    "apps_and_interfaces_route_through": "https://aurcore.skygrid-protocol.net",
+    "fallback_usage": "deployment proof and emergency fallback only",
+    "stale_targets": [
+      "https://aura-core-t2t5.vercel.app",
+      "https://skygrid-protocol.net"
+    ]
+  },
+  "required_public_routes": [
+    "/",
+    "/health.json",
+    "/api/highway/status",
+    "/api/highway/postman",
+    "/api/pay/quote?amount=25",
+    "/dispatch",
+    "/scenarios"
+  ],
+  "public_guardrails": [
+    "controlled-pilot/advisory output only",
+    "no public production traffic cutover",
+    "no public payment execution",
+    "no public private-data transfer",
+    "no public device activation",
+    "no unsupported emergency-service claims"
+  ],
+  "vercel_dns_intent": {
+    "project": "aura-core",
+    "subdomain": "aurcore",
+    "type": "CNAME",
+    "value": "cname.vercel-dns.com",
+    "note": "Use the exact Vercel-provided target if Vercel displays a project-specific value."
+  }
+}
