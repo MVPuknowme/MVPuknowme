@@ -21,7 +21,9 @@
     "stripe:expansion-session": "node scripts/create-stripe-expansion-session.mjs",
     "debug:utility-billing": "node scripts/debug-utility-billing-architecture.mjs",
     "make.debug": "pnpm run debug:utility-billing",
-    "test.config": "pnpm run run.config"
+    "test.config": "pnpm run run.config",
+    "proof:postman": "node scripts/run-skygrid-postman-proof.mjs",
+    "proof:postman:fallback": "node scripts/run-skygrid-postman-proof.mjs --fallback"
   },
   "dependencies": {
     "ai": "^5.0.0",
