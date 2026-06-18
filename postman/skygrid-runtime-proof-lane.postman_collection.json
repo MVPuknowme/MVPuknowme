@@ -1,0 +1,219 @@
+{
+  "info": {
+    "name": "SKYGRID Runtime Proof Lane",
+    "description": "Public controlled-pilot proof checks for the SKYGRID Emergency Data On-Ramp. Uses aurcore.skygrid-protocol.net as canonical and verifies advisory/fail-closed posture. No private authorization headers, no payment execution, no device activation, and no production failover.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.request.headers.remove('authorization');",
+          "pm.request.headers.remove('Authorization');",
+          "pm.request.headers.remove('x-amz-date');",
+          "pm.request.headers.remove('x-api-key');"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "{{skygrid_base}}",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Landing page returns HTML",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/html,application/json;q=0.9,*/*;q=0.8"
+          }
+        ],
+        "url": "{{skygrid_base}}/"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('HTML response', () => pm.expect(pm.response.text().toLowerCase()).to.include('<html'));",
+              "pm.test('SKYGRID language present', () => pm.expect(pm.response.text()).to.include('SKYGRID'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health JSON is online and fail-closed",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{skygrid_base}}/health.json"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('ok true', () => pm.expect(body.ok).to.eql(true));",
+              "pm.test('service name is SKYGRID Emergency Data On-Ramp', () => pm.expect(body.service || body.product).to.include('SKYGRID'));",
+              "pm.test('controlled-pilot/advisory posture present', () => pm.expect(JSON.stringify(body).toLowerCase()).to.match(/controlled|pilot|advisory|fail/));",
+              "pm.test('no payment execution', () => pm.expect(JSON.stringify(body).toLowerCase()).to.not.include('payment_execution\":true'));",
+              "pm.test('no device activation', () => pm.expect(JSON.stringify(body).toLowerCase()).to.not.include('device_activation\":true'));",
+              "pm.test('no production failover', () => pm.expect(JSON.stringify(body).toLowerCase()).to.not.include('production_failover\":true'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Highway status route is advisory",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{skygrid_base}}/api/highway/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('ok true', () => pm.expect(body.ok).to.eql(true));",
+              "pm.test('SKYGRID service', () => pm.expect(body.service || body.product).to.include('SKYGRID'));",
+              "pm.test('route/status payload does not claim production failover', () => pm.expect(JSON.stringify(body).toLowerCase()).to.not.include('production_failover\":true'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Postman proof route is JSON-compatible",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json,*/*;q=0.8"
+          }
+        ],
+        "url": "{{skygrid_base}}/api/highway/postman"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "let body; pm.test('JSON-compatible body', () => { body = pm.response.json(); pm.expect(body).to.be.an('object'); });",
+              "pm.test('proof route identifies public runtime check', () => pm.expect(JSON.stringify(body).toLowerCase()).to.match(/proof|postman|route/));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quote route is quote-only",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{skygrid_base}}/api/pay/quote?amount=25"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('ok true', () => pm.expect(body.ok).to.eql(true));",
+              "pm.test('quote only', () => pm.expect(JSON.stringify(body).toLowerCase()).to.match(/quote.*only|quote_only|nopaymentexecuted|execution.*disabled/));",
+              "pm.test('no payment executed', () => pm.expect(JSON.stringify(body).toLowerCase()).to.not.include('payment_execution\":true'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dispatch advisory page returns public-safe output",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/html,application/json;q=0.9,*/*;q=0.8"
+          }
+        ],
+        "url": "{{skygrid_base}}/dispatch"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('advisory/controlled language present', () => pm.expect(pm.response.text().toLowerCase()).to.match(/advisory|controlled|pilot|fail-closed|fail closed/));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scenarios route returns public-safe output",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json,text/html;q=0.9,*/*;q=0.8"
+          }
+        ],
+        "url": "{{skygrid_base}}/scenarios"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('public-safe output present', () => pm.expect(pm.response.text().toLowerCase()).to.match(/scenario|drill|demo|pilot|advisory/));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
