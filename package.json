@@ -26,7 +26,9 @@
     "proof:postman:fallback": "node scripts/run-skygrid-postman-proof.mjs --fallback",
     "local:worker:start": "node scripts/skygrid-local-worker-start.mjs --approve-owner-test",
     "local:worker:proof": "node scripts/skygrid-local-worker-start.mjs",
-    "local:worker:fallback": "node scripts/skygrid-local-worker-start.mjs --approve-owner-test --fallback"
+    "local:worker:fallback": "node scripts/skygrid-local-worker-start.mjs --approve-owner-test --fallback",
+    "eth:collection:draft": "node scripts/skygrid-ethereum-collection-draft.mjs",
+    "local:ethereum:proof": "pnpm run local:worker:start && pnpm run eth:collection:draft"
   },
   "dependencies": {
     "ai": "^5.0.0",
