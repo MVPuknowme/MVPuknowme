@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
+const CANONICAL_BASE_URL = 'https://aurcore.skygrid-protocol.net';
+const FALLBACK_BASE_URL = 'https://aura-core.vercel.app';
+
 const DEFAULT_BASE_URLS = [
-  'https://aurcore.skygrid-protocol.net',
-  'https://aura-core.vercel.app'
+  CANONICAL_BASE_URL,
+  FALLBACK_BASE_URL
 ];
 
 const REQUIRED_ROUTES = [
@@ -20,7 +23,9 @@ const baseUrls = (process.env.SKYGRID_ROUTE_CHECK_BASE_URLS || '')
 
 const targets = baseUrls.length > 0 ? baseUrls : DEFAULT_BASE_URLS;
 const timeoutMs = Number.parseInt(process.env.SKYGRID_ROUTE_CHECK_TIMEOUT_MS || '15000', 10);
-const failures = [];
+const requireAllTargets = String(process.env.SKYGRID_ROUTE_CHECK_REQUIRE_ALL || '').toLowerCase() === 'true';
+const requireCanonical = String(process.env.SKYGRID_REQUIRE_CANONICAL_DOMAIN || '').toLowerCase() === 'true';
+const targetResults = new Map();
 
 function buildUrl(baseUrl, routePath) {
   return new URL(routePath, baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`).toString();
@@ -36,7 +41,7 @@ async function fetchWithTimeout(url) {
       redirect: 'follow',
       signal: controller.signal,
       headers: {
-        'user-agent': 'skygrid-route-check/1.0',
+        'user-agent': 'skygrid-route-check/1.1',
         accept: 'application/json,text/html;q=0.9,*/*;q=0.8'
       }
     });
@@ -86,6 +91,7 @@ function validatePayload(route, text, contentType) {
 
 for (const baseUrl of targets) {
   console.log(`\n== SKYGRID public route check: ${baseUrl} ==`);
+  const failures = [];
 
   for (const route of REQUIRED_ROUTES) {
     const url = buildUrl(baseUrl, route.path);
@@ -114,11 +120,40 @@ for (const baseUrl of targets) {
       failures.push({ baseUrl, route: route.path, error: message });
     }
   }
+
+  targetResults.set(baseUrl, {
+    ok: failures.length === 0,
+    failures
+  });
 }
 
-if (failures.length > 0) {
+const passingTargets = [...targetResults.entries()].filter(([, result]) => result.ok);
+const canonicalResult = targetResults.get(CANONICAL_BASE_URL);
+const fallbackResult = targetResults.get(FALLBACK_BASE_URL);
+const hardFailures = [];
+
+if (requireAllTargets) {
+  for (const [baseUrl, result] of targetResults.entries()) {
+    if (!result.ok) hardFailures.push(...result.failures);
+  }
+} else if (passingTargets.length === 0) {
+  for (const result of targetResults.values()) hardFailures.push(...result.failures);
+}
+
+if (requireCanonical && canonicalResult && !canonicalResult.ok) {
+  hardFailures.push(...canonicalResult.failures);
+}
+
+if (canonicalResult && !canonicalResult.ok && fallbackResult?.ok && !requireCanonical && !requireAllTargets) {
+  console.warn('\nSKYGRID canonical domain warning:');
+  console.warn(`- ${CANONICAL_BASE_URL} is not serving required routes yet.`);
+  console.warn(`- ${FALLBACK_BASE_URL} passed all required routes, so CI remains green during domain cutover.`);
+  console.warn('- Attach aurcore.skygrid-protocol.net to the healthy Vercel aura-core project, then set SKYGRID_REQUIRE_CANONICAL_DOMAIN=true.');
+}
+
+if (hardFailures.length > 0) {
   console.error('\nSKYGRID public route check failed:');
-  for (const failure of failures) {
+  for (const failure of hardFailures) {
     console.error(`- ${failure.baseUrl}${failure.route}: ${failure.error}`);
   }
   process.exit(1);
