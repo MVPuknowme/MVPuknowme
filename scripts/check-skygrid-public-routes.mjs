@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const DEFAULT_BASE_URLS = [
-  'https://skygrid-protocol.net',
+  'https://aurcore.skygrid-protocol.net',
   'https://aura-core.vercel.app'
 ];
 
