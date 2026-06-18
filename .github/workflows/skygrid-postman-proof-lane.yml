@@ -1,0 +1,67 @@
+name: SKYGRID Postman Proof Lane
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Proof target: canonical or fallback"
+        required: true
+        default: "canonical"
+        type: choice
+        options:
+          - canonical
+          - fallback
+  push:
+    branches:
+      - main
+      - MVPuknowme
+    paths:
+      - "postman/**"
+      - "scripts/run-skygrid-postman-proof.mjs"
+      - "package.json"
+      - ".github/workflows/skygrid-postman-proof-lane.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  postman-proof:
+    name: Public runtime proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SKYGRID_PROOF_BASE_URL: https://aurcore.skygrid-protocol.net
+      SKYGRID_FALLBACK_PROOF_URL: https://aura-core.vercel.app
+      SKYGRID_PROOF_TIMEOUT_MS: "15000"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Install Newman
+        run: pnpm dlx newman --version
+
+      - name: Run fallback proof on push
+        if: github.event_name == 'push'
+        run: pnpm run proof:postman:fallback
+
+      - name: Run canonical proof on dispatch
+        if: github.event_name == 'workflow_dispatch' && inputs.target == 'canonical'
+        run: pnpm run proof:postman
+
+      - name: Run fallback proof on dispatch
+        if: github.event_name == 'workflow_dispatch' && inputs.target == 'fallback'
+        run: pnpm run proof:postman:fallback
