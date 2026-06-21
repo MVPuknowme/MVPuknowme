@@ -70,6 +70,10 @@ function healthWeight(status) {
   return 0;
 }
 
+function isSelectable(route) {
+  return route.kind !== "queue" && ["healthy", "ready", "online"].includes(route.status) && route.reliability >= 0.8;
+}
+
 function scoreRoute(route) {
   const health = healthWeight(route.status);
   const latencyPenalty = Math.min(route.latencyMs / 2, 80);
@@ -81,12 +85,12 @@ function scoreRoute(route) {
     ...route,
     health,
     score: Number(score.toFixed(2)),
-    eligible: route.kind !== "queue" && health >= 0.7 && route.reliability >= 0.8,
+    selectable: isSelectable(route),
   };
 }
 
 const candidates = routes.map(scoreRoute).sort((a, b) => b.score - a.score);
-const selected = candidates.find((route) => route.eligible) ?? candidates.find((route) => route.kind === "queue");
+const selected = candidates.find((route) => route.selectable) ?? candidates.find((route) => route.kind === "queue");
 const expectedByScenario = {
   primary: "primary-vercel-onramp",
   local: "local-worker-fallback",
