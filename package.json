@@ -28,7 +28,10 @@
     "local:worker:proof": "node scripts/skygrid-local-worker-start.mjs",
     "local:worker:fallback": "node scripts/skygrid-local-worker-start.mjs --approve-owner-test --fallback",
     "eth:collection:draft": "node scripts/skygrid-ethereum-collection-draft.mjs",
-    "local:ethereum:proof": "pnpm run local:worker:start && pnpm run eth:collection:draft"
+    "local:ethereum:proof": "pnpm run local:worker:start && pnpm run eth:collection:draft",
+    "route:probe": "node scripts/skygrid-route-option-probe.mjs",
+    "route:probe:local": "SKYGRID_PRIMARY_STATUS=degraded SKYGRID_AWS_STATUS=degraded SKYGRID_LOCAL_STATUS=healthy node scripts/skygrid-route-option-probe.mjs",
+    "route:probe:queue": "SKYGRID_PRIMARY_STATUS=offline SKYGRID_AWS_STATUS=offline SKYGRID_LOCAL_STATUS=offline node scripts/skygrid-route-option-probe.mjs"
   },
   "dependencies": {
     "ai": "^5.0.0",
