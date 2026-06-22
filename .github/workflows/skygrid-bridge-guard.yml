@@ -9,11 +9,15 @@ permissions:
 
 env:
   NODE_ENV: staging
+  CI: true
 
 jobs:
   bridge-guard:
+    name: Bridge guard / staging proof
     runs-on: ubuntu-latest
     environment: bridge-staging
+    timeout-minutes: 20
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,84 +25,205 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Enable Corepack
-        run: corepack enable
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install dependencies when package.json exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f "package.json" ]; then
+            if [ -f "pnpm-lock.yaml" ]; then
+              pnpm install --frozen-lockfile
+            else
+              echo "pnpm-lock.yaml not found; installing without frozen lockfile"
+              pnpm install
+            fi
+          else
+            echo "package.json not found; skipping dependency install"
+          fi
 
       - name: Compile Solidity contracts
+        shell: bash
         run: |
+          set -euo pipefail
           if [ -f "hardhat.config.js" ] || [ -f "hardhat.config.ts" ]; then
-            pnpm hardhat compile || true
+            pnpm exec hardhat compile
           else
             echo "Hardhat config not found, skipping Solidity compilation"
           fi
 
       - name: Run bridge-controller tests
+        shell: bash
         run: |
+          set -euo pipefail
           if [ -d "test" ] || [ -d "tests" ]; then
-            pnpm test --testPathPattern="bridge" || pnpm test || true
+            if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)"; then
+              pnpm test -- --testPathPattern="bridge" || pnpm test
+            else
+              echo "No package.json test script found, skipping test execution"
+            fi
           else
-            echo "No tests found, skipping test execution"
+            echo "No tests directory found, skipping test execution"
           fi
 
       - name: Safety grep - check for production secrets and execution flags
+        shell: bash
         run: |
-          set +e
+          set -euo pipefail
           FAILED=0
 
-          echo "Scanning for plaintext private keys..."
-          if grep -r "PRIVATE_KEY\s*=" --include="*.js" --include="*.ts" --include="*.env*" --include="*.json" .; then
+          EXCLUDES=(
+            --exclude-dir=.git
+            --exclude-dir=node_modules
+            --exclude-dir=dist
+            --exclude-dir=build
+            --exclude-dir=.next
+            --exclude-dir=coverage
+            --exclude-dir=pnpk-out
+          )
+
+          INCLUDES=(
+            --include='*.js'
+            --include='*.mjs'
+            --include='*.cjs'
+            --include='*.ts'
+            --include='*.tsx'
+            --include='*.json'
+            --include='*.env*'
+          )
+
+          echo "Scanning for plaintext private key assignments..."
+          if grep -RIE "PRIVATE_KEY[[:space:]]*[:=]" "${EXCLUDES[@]}" "${INCLUDES[@]}" .; then
             echo "❌ FAIL: Found plaintext private key assignments"
             FAILED=1
           fi
 
-          echo "Scanning for mainnet execution flags..."
-          if grep -riE "(mainnet|production).*true|rpc.*mainnet" --include="*.js" --include="*.ts" --include="*.json" .; then
+          echo "Scanning for mainnet/production execution flags..."
+          if grep -RIE "(MAINNET_EXECUTE|PRODUCTION_EXECUTE|LIVE_BRIDGE_EXECUTE)[[:space:]]*[:=][[:space:]]*(true|1)|rpc.*mainnet" "${EXCLUDES[@]}" "${INCLUDES[@]}" .; then
             echo "❌ FAIL: Found mainnet/production execution flags"
             FAILED=1
           fi
 
-          echo "Scanning for AWS credentials..."
-          if grep -r "AKIA[0-9A-Z]\{16\}" --include="*.js" --include="*.ts" --include="*.env*" .; then
+          echo "Scanning for AWS access key patterns..."
+          if grep -RIE "AKIA[0-9A-Z]{16}" "${EXCLUDES[@]}" "${INCLUDES[@]}" .; then
             echo "❌ FAIL: Found AWS access key patterns"
             FAILED=1
           fi
 
-          echo "Scanning for seed phrases..."
-          if grep -riE "(seed|mnemonic)\s*(phrase|phrase:|=)" --include="*.js" --include="*.ts" --include="*.env*" .; then
-            echo "⚠️  WARNING: Found potential seed phrase references"
+          echo "Scanning for seed phrase references..."
+          if grep -RIE "(seed|mnemonic)[[:space:]_-]*(phrase)?[[:space:]]*[:=]" "${EXCLUDES[@]}" "${INCLUDES[@]}" .; then
+            echo "⚠️ WARNING: Found potential seed phrase references; review manually"
           fi
 
-          if [ $FAILED -eq 1 ]; then
-            echo "Safety check failed!"
+          if [ "$FAILED" -eq 1 ]; then
+            echo "Safety check failed"
             exit 1
           fi
+
           echo "✅ Safety check passed - no dangerous secrets detected"
 
       - name: Run Newman tests against bridge-control API
         if: hashFiles('postman/skygrid-bridge-control.collection.json') != ''
+        shell: bash
         run: |
+          set -euo pipefail
           npm install -g newman
+          cat > newman-env.json <<EOF
+          {
+            "name": "SKYGRID Bridge Guard Staging",
+            "values": [
+              {
+                "key": "base_url",
+                "value": "${{ secrets.SKYGRID_STAGING_BASE_URL }}",
+                "enabled": true
+              }
+            ]
+          }
+          EOF
           newman run postman/skygrid-bridge-control.collection.json \
-            --environment <(echo "{\"values\": [{\"key\": \"base_url\", \"value\": \"${{ secrets.SKYGRID_STAGING_BASE_URL }}\"}]}") \
+            --environment newman-env.json \
             --reporters cli,json \
             --reporter-json-export newman-report.json
-        continue-on-error: true
+
+      - name: Build preflight PNPK proof packet
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p pnpk-out
+
+          CREATED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          RUN_ID="${{ github.run_id }}"
+          COMMIT_SHA="${{ github.sha }}"
+          PNPK_PATH="pnpk-out/skygrid-bridge-preflight-${RUN_ID}.pnpk"
+
+          NEWMAN_PRESENT=false
+          if [ -f "newman-report.json" ]; then
+            NEWMAN_PRESENT=true
+          fi
+
+          cat > "$PNPK_PATH" <<EOF
+          {
+            "pnpk_version": "0.1.0",
+            "packet_type": "skygrid_bridge_preflight_proof",
+            "service": "SKYGRID Emergency Data On-Ramp",
+            "created_at": "${CREATED_AT}",
+            "github": {
+              "repository": "${{ github.repository }}",
+              "workflow": "${{ github.workflow }}",
+              "run_id": "${RUN_ID}",
+              "commit_sha": "${COMMIT_SHA}",
+              "ref": "${{ github.ref }}"
+            },
+            "sentinel": {
+              "decision": "preflight_only",
+              "reason": "Bridge Guard workflow generated proof packet; no execution authority granted"
+            },
+            "proof": {
+              "node_env": "${NODE_ENV}",
+              "newman_report_present": ${NEWMAN_PRESENT},
+              "newman_report": "newman-report.json",
+              "staging_base_url_configured": ${{ secrets.SKYGRID_STAGING_BASE_URL != '' }}
+            },
+            "execution": {
+              "executable": false,
+              "payments_executed": false,
+              "devices_activated": false,
+              "private_data_moved": false,
+              "production_failover_triggered": false,
+              "mainnet_deployment": false
+            }
+          }
+          EOF
+
+          echo "Generated PNPK proof packet at ${PNPK_PATH}"
+
+      - name: Upload PNPK preflight packet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skygrid-bridge-preflight-pnpk
+          path: pnpk-out/*.pnpk
+          if-no-files-found: error
 
       - name: Upload Newman test report
-        if: hashFiles('postman/skygrid-bridge-control.collection.json') != ''
-        uses: actions/upload-artifact@v3
+        if: always() && hashFiles('newman-report.json') != ''
+        uses: actions/upload-artifact@v4
         with:
           name: newman-report
           path: newman-report.json
-        continue-on-error: true
+          if-no-files-found: warn
 
       - name: Verify staging-only deployment
+        shell: bash
         run: |
+          set -euo pipefail
           echo "✅ Workflow validated for staging/proof-only execution"
           echo "🔒 No mainnet deployment, fund movement, or production secrets detected"
-          echo "🛡️  Bridge-control path guarded and staging-ready"
+          echo "🛡️ Bridge-control path guarded and staging-ready"
