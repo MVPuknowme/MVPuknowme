@@ -14,7 +14,7 @@ class MVPuknowmeOpenAI:
     """Small wrapper around the OpenAI client for Aura-Core style integrations."""
 
     api_key: Optional[str] = None
-    model: str = "gpt-4o-mini"
+    model: str = "gpt-5.6 sol"
 
     def __post_init__(self) -> None:
         key = self.api_key or os.getenv("OPENAI_API_KEY")
