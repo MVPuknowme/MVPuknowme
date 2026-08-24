@@ -13,7 +13,7 @@ from openai import OpenAI
 class MVPuknowmeOpenAI:
     """Small wrapper around the OpenAI client for Aura-Core style integrations."""
 
-    api_key: Optional[str] = None
+    api_key: Optional[str] = ()
     model: str = "gpt-5.6 sol"
 
     def __post_init__(self) -> None:
