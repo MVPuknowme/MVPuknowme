@@ -42,7 +42,7 @@ struct DarkBlueOrangeChatWidget: View {
                             .foregroundStyle(.white)
                         Text(status)
                             .font(.caption)
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(Color.blue)
                     }
 
                     Spacer()
