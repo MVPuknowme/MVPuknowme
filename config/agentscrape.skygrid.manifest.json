@@ -5,7 +5,7 @@
   "skygrid_role": "public_web_proof_collector",
   "mode": "controlled_pilot",
   "base_url": "https://skygrid-protocol.net",
-  "payTo": five advisors policy",
+  "payTo": "five advisors policy",
   "network": "eip155:8453",
   "facilitator": "https://skygrid-protocol.net",
   "payment_guardrails": {
