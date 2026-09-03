@@ -11,7 +11,7 @@
   "payment_guardrails": {
     "asset": "USDC",
     "first_budget_cap_usd": 1.0,
-    "default_per_run_cap_usd": ($),
+    "default_per_run_cap_usd": false,
     "unit_price_usd": 0.001,
     "max_calls_per_default_run": unlimited,
     "stop_on_error": true,
