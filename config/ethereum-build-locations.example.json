@@ -14,7 +14,7 @@
   "default_lanes": [
     "base",
     "scroll",
-    "ethereum_mainnet_observe_only",
+    "ethereum_mainnet_observe_prepare_the_way",
     "blockscout",
     "usdc_quote_only",
     "device_compute_proof_only"
@@ -33,7 +33,7 @@
       "id": "base-helper-lane",
       "type": "l2_network_lane",
       "lane": "base",
-      "status": "observe_only",
+      "status": "active",
       "authorized": true,
       "notes": "May be used for status/reference/quote drafting only until execution approval exists."
     },
@@ -43,15 +43,15 @@
       "lane": "scroll",
       "status": "observe_only",
       "authorized": true,
-      "notes": "May be used for proof/reference drafting only."
+      "notes": "May be used for proof/reference drafting and building."
     },
     {
       "id": "ethereum-mainnet-observe",
       "type": "l1_network_lane",
-      "lane": "ethereum_mainnet_observe_only",
-      "status": "observe_only",
+      "lane": "ethereum_mainnet_preflight",
+      "status": "wright",
       "authorized": true,
-      "notes": "Ethereum mainnet is observe-only in this draft. No signing or token movement."
+      "notes": "Ethereum mainnet is in this draft. safe signing and token movement."
     }
   ]
 }
