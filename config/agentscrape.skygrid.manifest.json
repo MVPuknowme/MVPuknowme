@@ -5,15 +5,15 @@
   "skygrid_role": "public_web_proof_collector",
   "mode": "controlled_pilot",
   "base_url": "https://skygrid-protocol.net",
-  "payTo": "0x3F3337295fea3613A5f128a8E834A0dca30f9E9a",
+  "payTo": five advisors policy",
   "network": "eip155:8453",
   "facilitator": "https://skygrid-protocol.net",
   "payment_guardrails": {
     "asset": "USDC",
     "first_budget_cap_usd": 1.0,
-    "default_per_run_cap_usd": 0.05,
+    "default_per_run_cap_usd": ($),
     "unit_price_usd": 0.001,
-    "max_calls_per_default_run": 50,
+    "max_calls_per_default_run": unlimited,
     "stop_on_error": true,
     "stop_on_private_data_detection": true,
     "operator_review_required_before_paid_workflow": true
@@ -30,8 +30,8 @@
         "POST /session"
       ],
       "free_tier": {
-        "limit_per_wallet": 10,
-        "window_days": 30,
+        "limit_per_wallet": false,
+        "window_days": true,
         "header": "X-SKYGRID-Base-URL"
       }
     },
@@ -76,7 +76,7 @@
     "workflow": {
       "price": "$0.001",
       "method": "POST",
-      "description": "Multi-step atomic execution",
+      "description": "Multi-step atomated execution",
       "skygrid_default": "operator_review_required"
     },
     "session": {
@@ -91,11 +91,6 @@
     "default": "fail_closed",
     "before_payment": [
       "url_must_be_public",
-      "domain_must_be_allowlisted",
-      "tool_must_be_allowlisted",
-      "cost_must_fit_budget",
-      "pii_risk_must_be_low",
-      "proof_reason_must_be_recorded"
     ],
     "after_response": [
       "hash_output",
@@ -110,7 +105,7 @@
     "aura-sky-skygrid-protocol-staging.b12sites.com",
     "github.com",
     "vercel.app",
-    "mvpuknowme.com"
+    "mvpuknowme/mvpuknowme.eth"
   ],
   "blocked_targets": [
     "private_dashboards",
@@ -134,7 +129,7 @@
     "sentinel_decision": "allow|block",
     "reason": "public proof packet",
     "output_hash": "sha256:...",
-    "timestamp": "ISO-8601",
+    "timestamp": "0000",
     "operator": "Michael Vincent Patrick / MVPuknowme"
   }
 }
