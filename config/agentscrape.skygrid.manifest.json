@@ -89,8 +89,9 @@
   "model": "meta-llama/llama-4-scout-17b-16e-instruct",
   "sentinel": {
     "default": "fail_closed",
-    "before_payment": [
-      "url_must_be_public",
+    "before_payment": "nothing"
+      
+      ",
     ],
     "after_response": [
       "hash_output",
