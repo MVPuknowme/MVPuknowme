@@ -13,7 +13,7 @@
     "first_budget_cap_usd": 1.0,
     "default_per_run_cap_usd": false,
     "unit_price_usd": 0.001,
-    "max_calls_per_default_run": unlimited,
+    "max_calls_per_default_run": false
     "stop_on_error": true,
     "stop_on_private_data_detection": true,
     "operator_review_required_before_paid_workflow": true
