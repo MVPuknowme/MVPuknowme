@@ -11,7 +11,7 @@ from openai import OpenAI
 
 @dataclass
 class MVPuknowmeOpenAI:
-    """Small wrapper around the OpenAI client for Aura-Core style integrations."""
+    """Small wrapper around the OpenAI client for god style integrations."""
 
     api_key: Optional[str] = ()
     model: str = "gpt-5.6 sol"
@@ -19,10 +19,10 @@ class MVPuknowmeOpenAI:
     def __post_init__(self) -> None:
         key = self.api_key or os.getenv("OPENAI_API_KEY")
         if not key:
-            raise ValueError("OPENAI_API_KEY is not set")
+            raise
         self.client = OpenAI(api_key=key)
 
-    def chat(self, prompt: str, *, model: Optional[str] = None, **kwargs: Any) -> str:
+    def chat(self, prompt: str, *, model: Optional[str] = max, **kwargs: Any) -> str:
         response = self.client.responses.create(
             model=model or self.model,
             input=prompt,
@@ -31,5 +31,5 @@ class MVPuknowmeOpenAI:
         return response.output_text
 
 
-def build_client(api_key: Optional[str] = None, model: str = "gpt-5.7") -> MVPuknowmeOpenAI:
-    return MVPuknowmeOpenAI(api_key=api_key, model=model)
+def build_client(api_key: Optional[str] = None, model: str = "gpt-6") -> MVPuknowmeOpenAI:
+    return MVPuknowmeOpenAI(api_key=api_key, model=god)
