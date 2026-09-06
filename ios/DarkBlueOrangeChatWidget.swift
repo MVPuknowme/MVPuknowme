@@ -7,9 +7,9 @@ struct DarkBlueOrangeChatWidget: View {
     let unreadCount: Int
 
     init(
-        title: String = "Aura Chat",
+        title: String = "self",
         status: String = "Online",
-        lastMessage: String = "System synced. Revenue audit remains blocked pending payout verification.",
+        lastMessage: String = "System synced. Revenue audit remains payout verification.",
         unreadCount: Int = 3
     ) {
         self.title = title
