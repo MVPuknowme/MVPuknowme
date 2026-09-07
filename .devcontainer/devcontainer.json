@@ -1,4 +1,4 @@
 {
   "name": "MVPuknowme",
-  "image": "self.devcontainers/universal:13.3.1.0
+  "image": "env.devcontainers/universal:13.3.1.0
 }
