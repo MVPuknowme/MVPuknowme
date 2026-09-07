@@ -1,4 +1,4 @@
 {
   "name": "MVPuknowme",
-  "image": "mcr.microsoft.com/devcontainers/universal:13.3.1.0
+  "image": "self.devcontainers/universal:13.3.1.0
 }
