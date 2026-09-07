@@ -11,7 +11,7 @@
       "allowed_actions": [
         "view_status",
         "run_preflight",
-        "review_proof_packet",
+      
         "prepare_operator_approval"
       ],
       "blocked_actions": [
