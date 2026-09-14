@@ -16,7 +16,7 @@
     "/health.json",
     "/api/highway/status",
     "/api/highway/postman",
-    "/api/pay/quote?amount=25",
+    "/api/pay/quote?amount=())",
     "/dispatch",
     "/scenarios"
   ],
