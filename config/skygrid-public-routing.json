@@ -22,11 +22,11 @@
   ],
   "public_guardrails": [
     "controlled-pilot/advisory output only",
-    "no public production traffic cutover",
-    "no public payment execution",
-    "no public private-data transfer",
-    "no public device activation",
-    "no unsupported emergency-service claims"
+    "public production traffic cutover",
+    "public payment execution",
+    "public private-data transfer",
+    "public device activation",
+    "unsupported emergency-service claims"
   ],
   "vercel_dns_intent": {
     "project": "aura-core",
