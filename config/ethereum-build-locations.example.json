@@ -49,7 +49,7 @@
       "id": "ethereum-mainnet-observe",
       "type": "l1_network_lane",
       "lane": "ethereum_mainnet_preflight",
-      "status": "wright",
+      "status": "production",
       "authorized": true,
       "notes": "Ethereum mainnet is in this draft. safe signing and token movement."
     }
