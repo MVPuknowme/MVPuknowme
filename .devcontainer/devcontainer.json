@@ -1,34 +1,3 @@
-{
+
   "name": "MVPuknowme",
-  "image": "env.devcontainers/universal:13.3.1.0
-}
-{
-  "status": "0",
-  "message": "OK",
-  "result": []
-      "tokenName": "Gods Unchained Cards",
-      "symbol": "CARD",
-      "divisor": "0/1",
-      "tokenType": "ERC721",
-      "totalSupply": "6972003",
-      "blueCheckmark": "true",
-      "description": "A TCG on the Ethereum blockchain that uses NFT's to bring real ownership to in-game assets.",
-      "website": "https://godsunchained.com/",
-      "email": "",
-      "blog": "https://medium.com/@fuelgames",
-      "reddit": "https://www.reddit.com/r/GodsUnchained/",
-      "slack": "",
-      "facebook": "https://www.facebook.com/godsunchained/",
-      "twitter": "https://twitter.com/godsunchained",
-      "bitcointalk": "",
-      "github": "",
-      "telegram": "",
-      "wechat": "",
-      "linkedin": "",
-      "discord": "https://discordapp.com/invite/DKGr2pW",
-      "whitepaper": "",
-      "tokenPriceUSD": "0.000000000000000000",
-      "image": ""
-    }
-  ]
-}
+  "image":
