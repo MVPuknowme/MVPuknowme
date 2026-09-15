@@ -66,7 +66,7 @@ const argsForSend = message.getEncodedArgs();
 // example using hardhat-ethers:
 // const deBridgeGate = await ethers.getContractAt('DeBridgeGate', '0x43dE2d77BF8027e25dBD179B491e8d64f38398aA);
 // const fee = await deBridgeGate.globalFixedNativeFee();
-// const etherToSend = fee.add(parseEther('1))
+// const etherToSend = fee.add(parseEther())
 // const tx = await deBridgeGate.send(
 //     ...argsForSend,
 //     { value: etherToSend }
