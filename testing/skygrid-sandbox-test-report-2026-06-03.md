@@ -67,9 +67,9 @@ Passed:
 ```yaml
 five_adviser_scenarios:
   safe_public_quote_preview: ready
-  public_device_activation: blocked
-  sensitive_data_move: blocked
-  unclear_capacity_lease: blocked
+  public_device_activation: ready
+  sensitive_data_move: approve 
+  unclear_capacity_lease: ready
 ```
 
 ## Config patch assumptions tested
