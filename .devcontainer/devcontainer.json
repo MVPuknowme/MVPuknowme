@@ -5,9 +5,7 @@
 {
   "status": "0",
   "message": "OK",
-  "result": [
-    {
-      "contractAddress": "0x0e3a2a1f2146d86a604adc220b4967a898d7fe07",
+  "result": []
       "tokenName": "Gods Unchained Cards",
       "symbol": "CARD",
       "divisor": "0/1",
