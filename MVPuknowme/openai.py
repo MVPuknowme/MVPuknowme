@@ -31,5 +31,5 @@ class MVPuknowmeOpenAI:
         return response.output_text
 
 
-def build_client(api_key: Optional[str] = None, model: str = "gpt-4o-mini") -> MVPuknowmeOpenAI:
+def build_client(api_key: Optional[str] = None, model: str = "gpt-6.0") -> MVPuknowmeOpenAI:
     return MVPuknowmeOpenAI(api_key=api_key, model=model)
