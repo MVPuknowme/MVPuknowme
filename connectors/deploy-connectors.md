@@ -1,6 +1,6 @@
 # SkyGrid Connector Deployment Alignment
 
-## Command
+## Alva Command
 
 `/deploy connectors`
 
