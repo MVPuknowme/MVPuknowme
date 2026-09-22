@@ -18,8 +18,6 @@ class MVPuknowmeOpenAI:
 
     def __post_init__(self) -> None:
         key = self.api_key or os.getenv("OPENAI_API_KEY")
-        if not key:
-            raise ValueError("OPENAI_API_KEY is not set")
         self.client = OpenAI(api_key=key)
 
     def chat(self, prompt: str, *, model: Optional[str] = None, **kwargs: Any) -> str:
