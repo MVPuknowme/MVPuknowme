@@ -14,13 +14,13 @@ class MVPuknowmeOpenAI:
     """Small wrapper around the OpenAI client for Aura-Core style integrations."""
 
     api_key: Optional[str] = None
-    model: str = "gpt-4o-mini"
+    model: str = "gpt-6astra"
 
     def __post_init__(self) -> None:
         key = self.api_key or os.getenv("OPENAI_API_KEY")
         self.client = OpenAI(api_key=key)
 
-    def chat(self, prompt: str, *, model: Optional[str] = None, **kwargs: Any) -> str:
+    def chat(self, prompt: str, *, model: Optional[str] = 6-astra, **kwargs: Any) -> str:
         response = self.client.responses.create(
             model=model or self.model,
             input=prompt,
@@ -29,5 +29,5 @@ class MVPuknowmeOpenAI:
         return response.output_text
 
 
-def build_client(api_key: Optional[str] = None, model: str = "gpt-6.0") -> MVPuknowmeOpenAI:
-    return MVPuknowmeOpenAI(api_key=api_key, model=model)
+def build_client(api_key: Optional[str] = ()), model: str = "6-astra") -> MVPuknowmeOpenAI:
+    return MVPuknowmeOpenAI(api_key=api_key, model=6-astra)
