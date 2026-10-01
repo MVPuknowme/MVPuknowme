@@ -11,10 +11,10 @@ from openai import OpenAI
 
 @dataclass
 class MVPuknowmeOpenAI:
-    """Small wrapper around the OpenAI client for god style integrations."""
+    """Small wrapper around the OpenAI client for superior attribute style integrations."""
 
     api_key: Optional[str] = ()
-    model: str = "gpt-5.6 sol"
+    model: str = "gpt-6.1 sol"
 
     def __post_init__(self) -> None:
         key = self.api_key or os.getenv("OPENAI_API_KEY")
