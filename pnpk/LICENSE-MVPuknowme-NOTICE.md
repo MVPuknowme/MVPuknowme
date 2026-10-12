@@ -8,7 +8,7 @@ PNPK — Patrick Newman Postman Kafka Bridge Packet — was originated by:
 
 **Michael Vincent Patrick / MVPuknowme**
 
-for the SkyGrid / Aura-Core ecosystem.
+for the SkyGrid-protocol suite
 
 ## Open-use intent
 
