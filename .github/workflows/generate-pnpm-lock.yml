@@ -1,0 +1,47 @@
+name: Generate pnpm lockfile
+
+on:
+  push:
+    branches:
+      - fix/vercel-pnpm-install-20261122
+    paths:
+      - package.json
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - name: Enable pnpm 10.25.0
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.25.0 --activate
+          pnpm --version
+
+      - name: Generate lockfile
+        run: pnpm install --lockfile-only --ignore-scripts
+
+      - name: Validate frozen install
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Commit lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          if git diff --cached --quiet; then
+            echo "pnpm-lock.yaml is already up to date"
+          else
+            git commit -m "chore: generate pnpm lockfile"
+            git push
+          fi
